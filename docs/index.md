@@ -8,6 +8,7 @@ Sistem Otomasi Pengendalian dan Pemantauan Tanaman menggunakan teknologi IoT.
 - [System Overview](#system-overview)
 - [Hardware Components](#hardware-components)
 - [Software Components](#software-components)
+- [Architecture Diagram](#architecture-diagram)
 - [Contributors](#contributors)
 
 ## Introduction
@@ -54,8 +55,8 @@ Software yang digunakan dalam proyek ini untuk mendukung pengembangan sistem IoT
 
 | Name                                | Role/ID                      |
 |-------------------------------------|------------------------------|
-| Rido Zulfahmi, S.Kom., M.IT         | Ketua                        |
-| Nurhuda Maulana, T.T., M.T.         | Anggota                      |
+| Rido Zulfahmi, S.Kom., M.T.         | Ketua                        |
+| Nurhuda Maulana, S.T., M.T.         | Anggota                      |
 | 2210511044 - Rahman Ilyas Al-Kahfi  | Anggota                      |
 | 2210511056 - Adinda Rizki Sya'bana Diva | Anggota                   |
 | 2210511084 - Dzulfikri Adjmal       | Anggota                      |
