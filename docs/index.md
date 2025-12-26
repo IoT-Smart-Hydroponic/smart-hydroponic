@@ -58,6 +58,6 @@ Software yang digunakan dalam proyek ini untuk mendukung pengembangan sistem IoT
 | Rido Zulfahmi, S.Kom., M.T.         | Ketua                        |
 | Nurhuda Maulana, S.T., M.T.         | Anggota                      |
 | 2210511044 - Rahman Ilyas Al-Kahfi  | Anggota                      |
-| 2210511056 - Adinda Rizki Sya'bana Diva | Anggota                   |
+| 2210511056 - Adinda Rizki Sya'bana Diva | Anggota                  |
 | 2210511084 - Dzulfikri Adjmal       | Anggota                      |
 | 2210511122 - Sudarma Yudho Prayitno | Anggota                      |
