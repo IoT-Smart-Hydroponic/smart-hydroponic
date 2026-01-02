@@ -1,19 +1,37 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
+from typing import Optional
 
-class EnvironmentIn(BaseModel):
+class EnvironmentBase(BaseModel):
     deviceid: str = Field(..., max_length=50)
-    timestamp: datetime = Field(default_factory=datetime.now)
     temperature_atas: float = Field(0.0)
     temperature_bawah: float = Field(0.0)
     humidity_atas: float = Field(0.0)
     humidity_bawah: float = Field(0.0)
-    avg_temperature: float = Field(0.0)
-    avg_humidity: float = Field(0.0)
     light_intensity_atas: int = Field(0, ge=0)
     light_intensity_bawah: int = Field(0, ge=0)
-    avg_light_intensity: float = Field(0.0)
 
-class EnvironmentOut(EnvironmentIn):
-    class Config:
-        from_attributes = True
+class EnvironmentIn(EnvironmentBase):
+    timestamp: Optional[datetime] = None
+    
+    model_config = ConfigDict(
+        json_schema_extra=  {
+            "example": {
+                "deviceid": "env_sensor_001",
+                "temperature_atas": 25.5,
+                "temperature_bawah": 24.0,
+                "humidity_atas": 60.0,
+                "humidity_bawah": 58.0,
+                "light_intensity_atas": 800,
+                "light_intensity_bawah": 750,
+            }
+        }
+    )
+
+class EnvironmentOut(EnvironmentBase):
+    timestamp: datetime
+    temperature_avg: float
+    humidity_avg: float
+    light_intensity_avg: float
+    
+    model_config = ConfigDict(from_attributes=True)

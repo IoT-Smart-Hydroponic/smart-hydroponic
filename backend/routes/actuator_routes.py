@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, WebSocket
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
-from utils.deps import get_session
+from utils.deps import get_session, get_db_session
 from services.actuator_service import ActuatorService
 from schemas.actuator import ActuatorIn, ActuatorOut
 
@@ -27,3 +27,32 @@ async def get_specific_actuator_status(actuator_type: str, page: int = 1, limit:
 async def get_latest_actuator_status(session: AsyncSession = Depends(get_session)):
     service = ActuatorService(session)
     return await service.get_latest_data()
+
+@router.websocket("/ws/actuator")
+async def actuator_data_websocket(websocket: WebSocket):
+    """WebSocket endpoint untuk menerima data aktuator secara real-time."""
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_json()
+
+            async with get_db_session() as session:
+                service = ActuatorService(session)
+                actuator_in = ActuatorIn.model_validate(data)
+                row = await service.add_data(actuator_in)
+                await session.commit()
+            await websocket.send_json(
+                {
+                    "message": "Actuator data added successfully",
+                    "data": row.model_dump(),
+                }
+            )
+    except Exception as e:
+        await websocket.close()
+
+@router.get(
+        "/ws/actuator-info",
+        summary="WebSocket Actuator Connection",
+        description="Use /ws/actuator to connect to the WebSocket for real-time actuator data.")
+def websocket_info():
+    pass

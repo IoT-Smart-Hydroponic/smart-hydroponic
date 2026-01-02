@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from config.db import Session
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-
 from services.user_service import UserService
+from contextlib import asynccontextmanager
 
 bearer_scheme = HTTPBearer()
 
@@ -25,3 +25,13 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(b
         "sub": payload.get("sub"),
         "payload": dict(payload)
     }
+
+# Untuk penggunaan di luar konteks Depends e.g WebSocket
+@asynccontextmanager
+async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
+    """Context manager to provide a SQLAlchemy async session."""
+    async with Session() as session:
+        try:
+            yield session
+        finally:
+            await session.close()

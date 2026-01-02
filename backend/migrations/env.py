@@ -8,7 +8,7 @@ import os
 # --- Load app settings
 from config.config import settings
 from config.db import Base
-from models import user, plant_data, environment_data, actuator_data  # Ensure all models are imported for Alembic to detect
+from models import user, plant_data, environment_data, actuator_data, log, hydroponic  # Ensure all models are imported for Alembic to detect
 
 config = context.config
 

@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, WebSocket
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
-from utils.deps import get_session
+from utils.deps import get_session, get_db_session
 from services.sensor_service import SensorService
 from schemas.plant import SensorIn, SensorOut
 
@@ -28,3 +28,32 @@ async def get_specific_sensor_data(sensor_type: str, page: int = 1, limit: int =
 async def get_latest_sensor_data(session: AsyncSession = Depends(get_session)):
     service = SensorService(session)
     return await service.get_latest_data()
+
+@router.websocket("/ws/sensor")
+async def sensor_data_websocket(websocket: WebSocket):
+    """WebSocket endpoint untuk menerima data sensor secara real-time."""
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_json()
+
+            async with get_db_session() as session:
+                service = SensorService(session)
+                sensor_in = SensorIn.model_validate(data)
+                row = await service.add_data(sensor_in)
+                await session.commit()
+            await websocket.send_json(
+                {
+                    "message": "Sensor data added successfully",
+                    "data": row.model_dump(),
+                }
+            )
+    except Exception as e:
+        await websocket.close()
+
+@router.get(
+        "/ws/sensor-info", 
+        summary="WebSocket Sensor Connection",
+        description="Use /ws/sensor to connect to the WebSocket for real-time sensor data.")
+def websocket_info():
+    pass

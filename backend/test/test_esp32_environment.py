@@ -8,22 +8,19 @@ import json
 dotenv.load_dotenv()
 
 DEVICE_ID = "esp32-environment-device"
-# uri = f"ws://{os.getenv('HOST')}/ws/smart-hydroponic/device"
-uri = f"ws://{os.getenv('HOST')}:{os.getenv('PORT')}/ws/smart-hydroponic/device"
+uri = "ws://localhost:8000/hydroponics/ws/environment-data"
+
+asyncio.set_event_loop(asyncio.new_event_loop())
 
 
 def data_environment():
     return {
-        "deviceId": "esp32-environment-device",
-        "type": "update_data",
-        "room": "environment",
-        "broadcast": "command",
-        "data": {
-            "temperatureAtas": 20,
-            "temperatureBawah": 20,
-            "humidityAtas": random.randint(1, 100),
-            "humidityBawah": random.randint(1, 100),
-        },
+            "temperature_atas": 20,
+            "temperature_bawah": 20,
+            "humidity_atas": random.randint(1, 100),
+            "humidity_bawah": random.randint(1, 100),
+            "light_intensity_atas": random.randint(100, 1000),
+            "light_intensity_bawah": random.randint(100, 1000),
     }
 
 
@@ -43,13 +40,13 @@ async def main():
         try:
             ws = websockets.connect(uri)
             async with ws as websocket:
-                register_data = {
-                    "deviceId": DEVICE_ID,
-                    "type": "join",
-                    "room": "environment",
-                }
-                await websocket.send(json.dumps(register_data))
-                print(f"Sent register data: {register_data}")
+                # register_data = {
+                #     "deviceId": DEVICE_ID,
+                #     "type": "join",
+                #     "room": "environment",
+                # }
+                # await websocket.send(json.dumps(register_data))
+                # print(f"Sent register data: {register_data}")
                 while True:
                     data = data_environment()
                     json_data = json.dumps(data)

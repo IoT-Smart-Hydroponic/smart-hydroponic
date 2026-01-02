@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, WebSocket
 from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
-from utils.deps import get_session
+from utils.deps import get_session, get_db_session
 from services.environment_service import EnvironmentService
 from schemas.environment import EnvironmentIn, EnvironmentOut
 
@@ -27,3 +27,32 @@ async def get_specific_environment_data(data_type: str, page: int = 1, limit: in
 async def get_latest_environment_data(session: AsyncSession = Depends(get_session)):
     service = EnvironmentService(session)
     return await service.get_latest_data()
+
+@router.websocket("/ws/environment")
+async def environment_data_websocket(websocket: WebSocket):
+    """WebSocket endpoint untuk menerima data lingkungan secara real-time."""
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_json()
+
+            async with get_db_session() as session:
+                service = EnvironmentService(session)
+                env_in = EnvironmentIn.model_validate(data)
+                row = await service.add_data(env_in)
+                await session.commit()
+            await websocket.send_json(
+                {
+                    "message": "Environment data added successfully",
+                    "data": row.model_dump(),
+                }
+            )
+    except Exception as e:
+        await websocket.close()
+
+@router.get(
+        "/ws/environment-info",
+        summary="WebSocket Environment Connection",
+        description="Use /ws/environment to connect to the WebSocket for real-time environment data.")
+def websocket_info():
+    pass
