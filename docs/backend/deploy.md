@@ -1,4 +1,4 @@
-# Cara Deploy Backend
+# Cara Deploy Backend (JavaScript/Node.js)
 
 Untuk melakukan deploy backend, ikuti langkah-langkah berikut:
 
@@ -6,15 +6,15 @@ Untuk melakukan deploy backend, ikuti langkah-langkah berikut:
 
     Gunakan perintah berikut untuk meng-clone repository:
 
-     ```
-     git clone https://github.com/project-iot-fik/smart-hydroponic.git
+     ```bash
+     git clone https://github.com/IoT-Smart-Hydroponic/smart-hydroponic.git
      ```
 
 2. **Masuk ke Direktori Backend**
 
     Setelah repository berhasil di-clone, masuk ke direktori backend dengan perintah berikut:
 
-    ```
+    ```bash
     cd smart-hydroponic/backend
     ```
 
@@ -22,7 +22,7 @@ Untuk melakukan deploy backend, ikuti langkah-langkah berikut:
 
     Pastikan Anda telah menginstall semua dependencies yang diperlukan. Gunakan perintah berikut:
 
-    ```
+    ```bash
     npm install
     ```
 
@@ -32,7 +32,7 @@ Untuk melakukan deploy backend, ikuti langkah-langkah berikut:
 
     Pertama, buat copy dari file `.env.example`:
 
-    ```
+    ```bash
     cp .env.example .env
     ```
 
@@ -52,19 +52,19 @@ Untuk melakukan deploy backend, ikuti langkah-langkah berikut:
 
     Jika masih dalam test mode, gunakan:
 
-    ```
+    ```bash
     npm run start
     ```
 
     Untuk mode produksi, gunakan:
 
-    ```
+    ```bash
     pm2 start server.js --name backend-iot-hydroponic
     ```
 
     kemudian pastikan PM2 berjalan dengan baik:
 
-    ```
+    ```bash
     pm2 list
     ```
 

@@ -10,23 +10,26 @@ Database yang digunakan dalam proyek ini adalah PostgreSQL dengan ekstensi Times
 
     - Saat menjalankan Timescaledb tune, cermati output rekomendasi yang diberikan. Sesuaikan jangan terlalu tinggi atau terlalu rendah.
 
+    !!! info "Versi yang Direkomendasikan"
+        Gunakan versi PostgreSQL terbaru yang kompatibel dengan TimescaleDB dengan dukungan UUIDv7. Untuk saat ini, versi terbaru adalah Postgrsql 18.x dan TimeScaleDB 2.24
+
 2. **Buat Database**
 
     - Setelah PostgreSQL terinstal, buat database dan user yang diperlukan. Gunakan perintah berikut untuk masuk ke PostgreSQL:
 
-        ```
+        ```bash
         psql -U postgres
         ```
-    
+
     - Setelah masuk, buat database dengan nama `smart_hydroponic`:
 
-        ```
+        ```psql
         CREATE DATABASE iot_hydroponik;
         ```
-    
+
     - Membuat user baru dengan nama sesuai keingingan anda bila dijalankan di lokal, sedangkan di server gunakan user `admin_iot_db`:
 
-        ```
+        ```psql
         CREATE USER admin_iot_db WITH PASSWORD 'your_password';
         ```
 
@@ -34,10 +37,11 @@ Database yang digunakan dalam proyek ini adalah PostgreSQL dengan ekstensi Times
 
     - Berikan hak akses kepada user tersebut untuk database yang telah dibuat:
 
-        ```
+        ```psql
         GRANT ALL PRIVILEGES ON DATABASE iot_hydroponik TO admin_iot_db;
         ```
 
 3. Lakukan deployment pada server sesuai dengan [panduan deploy backend](deploy.md).
 
-Catatan: Pastikan tidak ada kesalahan saat melakukan konfigrasi, terutama pada ekstensi TimescaleDB.
+!!! warning "Penting"
+    Pastikan tidak ada kesalahan saat melakukan konfigrasi, terutama pada ekstensi TimescaleDB.

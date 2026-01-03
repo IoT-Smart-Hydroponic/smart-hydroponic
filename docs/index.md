@@ -2,14 +2,15 @@
 
 Sistem Otomasi Pengendalian dan Pemantauan Tanaman menggunakan teknologi IoT.
 
-## Table of Contents
+Dibangun menggunakan:
 
-- [Introduction](#introduction)
-- [System Overview](#system-overview)
-- [Hardware Components](#hardware-components)
-- [Software Components](#software-components)
-- [Architecture Diagram](#architecture-diagram)
-- [Contributors](#contributors)
+1. ESP32 dan ESP8266 sebagai mikrokontroler utama.
+2. Berbagai sensor untuk mengumpulkan data tanaman dan lingkungan.
+3. PostgreSQL dengan ekstensi TimescaleDB sebagai database untuk menyimpan data time-series.
+4. Dashboard web untuk visualisasi data dan kontrol sistem.
+5. JavaScript (Node.js) dan Python sebagai bahasa pemrograman backend.
+6. NGINX sebagai web server dan reverse proxy.
+7. Docker untuk containerization aplikasi backend dan database.
 
 ## Introduction
 

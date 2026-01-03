@@ -8,7 +8,7 @@ Untuk mengatur NGINX, dapat mengikuti langkah-langkah berikut:
 
 Untuk menginstal NGINX, gunakan perintah berikut:
 
-```
+```bash
 sudo apt update
 sudo apt-get install nginx
 ```
@@ -21,13 +21,13 @@ Setelah NGINX terinstal, konfigurasi dapat dilakukan dengan mengedit file konfig
 
 File konfigurasi untuk proyek Smart Hydroponic berada di path `/etc/nginx/sites-available/iot-hidroponik` dan dapat dibuat dengan perintah berikut:
 
-```
+```bash
 sudo nano /etc/nginx/sites-available/iot-hidroponik
 ```
 
 Isi file konfigurasi tersebut dengan konten berikut:
 
-```
+```bash
 server {
     listen 80; # Port default yang digunakan untuk HTTP
     server_name your_domain_or_ip; # Ganti dengan domain atau IP Anda. IP bisa cek dengan `ip a`
@@ -59,7 +59,7 @@ Penjelasan konfigurasi:
 
 Setelah file konfigurasi dibuat, aktifkan dengan membuat symlink ke direktori `sites-enabled`:
 
-```
+```bash
 sudo ln -s /etc/nginx/sites-available/iot-hidroponik /etc/nginx/sites-enabled/
 ```
 
@@ -67,13 +67,13 @@ sudo ln -s /etc/nginx/sites-available/iot-hidroponik /etc/nginx/sites-enabled/
 
 Setelah konfigurasi selesai, uji konfigurasi NGINX untuk memastikan tidak ada kesalahan:
 
-```
+```bash
 sudo nginx -t
 ```
 
 Jika tidak ada kesalahan, Anda akan melihat pesan yang menyatakan bahwa konfigurasi NGINX `ok` atau `successful`. Setelah itu, restart NGINX untuk menerapkan perubahan:
 
-```
+```bash
 sudo systemctl restart nginx
 ```
 
@@ -81,7 +81,7 @@ sudo systemctl restart nginx
 
 Untuk memastikan NGINX berjalan dengan baik dapat memeriksa statusnya dengan perintah berikut:
 
-```
+```bash
 sudo systemctl status nginx
 ```
 
@@ -91,4 +91,3 @@ Jika NGINX berjalan dengan baik, Anda akan melihat status `active (running)`.
 
 Akses aplikasi dengan membuka browser dan mengunjungi `http://your_domain_or_ip`.
 Jika semuanya berjalan dengan benar, maka akan muncul halaman aplikasi Smart Hydroponic.
-
