@@ -18,3 +18,8 @@ dependencies = [
     "jinja2>=3.1.6",
     "aiocoap>=0.4.17",
 ]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.10",
+]

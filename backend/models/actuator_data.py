@@ -3,6 +3,7 @@ from sqlalchemy import String, Integer, DateTime, text
 from config.db import Base
 from datetime import datetime
 
+
 class ActuatorData(Base):
     __tablename__ = "actuator_data"
 
@@ -17,4 +18,3 @@ class ActuatorData(Base):
     pump_status: Mapped[int] = mapped_column(Integer, nullable=False)
     light_status: Mapped[int] = mapped_column(Integer, nullable=False)
     automation_status: Mapped[int] = mapped_column(Integer, nullable=False)
-

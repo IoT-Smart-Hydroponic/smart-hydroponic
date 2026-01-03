@@ -1,8 +1,8 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import Field, computed_field
 
-class Settings(BaseSettings):
 
+class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
@@ -16,12 +16,13 @@ class Settings(BaseSettings):
     DATABASE_PASSWORD: str = Field(default="password", alias="PGPASSWORD")
     DATABASE_NAME: str = Field(default="iot_hydroponik", alias="PGDATABASE")
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE: str = Field(default="1h", alias="JWT_EXPIRES_IN") # 60 minutes
+    ACCESS_TOKEN_EXPIRE: str = Field(default="1h", alias="JWT_EXPIRES_IN")  # 60 minutes
     SECRET_KEY: str = Field(default="mysecretkey", alias="JWT_SECRET")
 
     @computed_field
     @property
     def DATABASE_URL(self) -> str:
         return f"postgresql+asyncpg://{self.DATABASE_USER}:{self.DATABASE_PASSWORD}@{self.DATABASE_HOST}:{self.DATABASE_PORT}/{self.DATABASE_NAME}"
+
 
 settings = Settings()

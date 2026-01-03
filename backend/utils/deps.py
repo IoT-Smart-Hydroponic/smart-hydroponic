@@ -14,17 +14,20 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with Session() as session:
         yield session
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme), session: AsyncSession = Depends(get_session)):
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    session: AsyncSession = Depends(get_session),
+):
     service = UserService(session)
     try:
         token = credentials.credentials
         payload = service.verify_token(token)
     except Exception as e:
         raise HTTPException(status_code=401, detail="Invalid or expired token") from e
-    return {
-        "sub": payload.get("sub"),
-        "payload": dict(payload)
-    }
+    print("Current user payload:", dict(payload))
+    return {"sub": payload.get("sub"), "payload": dict(payload)}
+
 
 # Untuk penggunaan di luar konteks Depends e.g WebSocket
 @asynccontextmanager

@@ -2,6 +2,38 @@ from pydantic import BaseModel, Field, ConfigDict, computed_field
 import datetime
 from typing import Optional
 from uuid import UUID
+from typing import Generic, TypeVar, List
+
+T = TypeVar("T")
+
+
+class MetaData(BaseModel):
+    total_rows: int
+    limit: int
+    offset: int
+
+    @computed_field
+    @property
+    def total_pages(self) -> int:
+        if self.limit == 0:
+            return 0
+        return (self.total_rows + self.limit - 1) // self.limit
+
+    @computed_field
+    @property
+    def current_page(self) -> int:
+        if self.limit == 0:
+            return 0
+        return (self.offset // self.limit) + 1
+
+
+class ResponseList(BaseModel, Generic[T]):
+    meta: MetaData
+    data: List[T]
+
+class HydroponicInternalResult(BaseModel):
+    data: List[HydroponicOut]
+    total: int
 
 class HydroponicDataSensor(BaseModel):
     moisture1: int = Field(0, ge=0)
@@ -14,6 +46,7 @@ class HydroponicDataSensor(BaseModel):
     total_litres: float = Field(0.0, ge=0.0)
     distance_cm: float = Field(0.0, ge=0.0)
 
+
 class HydroponicDataEnvironment(BaseModel):
     ph: float = Field(0.0, ge=0.0)
     tds: float = Field(0.0, ge=0.0)
@@ -24,13 +57,18 @@ class HydroponicDataEnvironment(BaseModel):
     light_intensity_atas: int = Field(0, ge=0)
     light_intensity_bawah: int = Field(0, ge=0)
 
+
 class HydroponicDataActuator(BaseModel):
     pump_status: bool = Field(False)
     light_status: bool = Field(False)
     automation_status: bool = Field(False)
 
-class HydroponicAggregate(HydroponicDataSensor, HydroponicDataEnvironment, HydroponicDataActuator):
+
+class HydroponicAggregate(
+    HydroponicDataSensor, HydroponicDataEnvironment, HydroponicDataActuator
+):
     dataid: UUID
+
 
 class HydroponicIn(HydroponicAggregate):
     model_config = ConfigDict(
@@ -60,6 +98,7 @@ class HydroponicIn(HydroponicAggregate):
             }
         }
     )
+
 
 class HydroponicOut(HydroponicAggregate):
     moisture1: Optional[int] = None
@@ -93,7 +132,10 @@ class HydroponicOut(HydroponicAggregate):
     @property
     def timestamp(self) -> datetime.datetime:
         timestamp_int = UUID(str(self.dataid)).time
-        date = datetime.datetime.fromtimestamp(timestamp_int / 1_000, tz=datetime.datetime.now(datetime.timezone.utc).tzinfo)
+        date = datetime.datetime.fromtimestamp(
+            timestamp_int / 1_000,
+            tz=datetime.datetime.now(datetime.timezone.utc).tzinfo,
+        )
         return date
 
     model_config = ConfigDict(from_attributes=True)

@@ -3,6 +3,7 @@ from schemas import HydroponicIn
 from uuid import uuid7
 import time
 
+
 class HydroponicAggregator:
     def __init__(self, timeout: float = 5.0, min_interval: float = 1.0):
         self.buffer = {"sensor": None, "environment": None, "actuator": None}
@@ -19,9 +20,11 @@ class HydroponicAggregator:
             if source in self.last_received:
                 delta = now - self.last_received[source]
                 if delta < self.min_interval:
-                    print(f"[WARN] Data from {source} received too quickly ({delta:.2f}s); ignoring.")
+                    print(
+                        f"[WARN] Data from {source} received too quickly ({delta:.2f}s); ignoring."
+                    )
                     return None
-                
+
             self.last_received[source] = now
 
             if any(self.buffer.values()) and (now - self.last_update > self.timeout):
@@ -40,23 +43,20 @@ class HydroponicAggregator:
 
     def is_complete(self):
         return all(value is not None for value in self.buffer.values())
-    
+
     def build_snapshot(self) -> HydroponicIn:
         combined_data = {
             **self.buffer["sensor"],
             **self.buffer["environment"],
             **self.buffer["actuator"],
         }
-        
+
         return HydroponicIn(dataid=uuid7(), **combined_data)
 
     def reset(self):
         # Reset buffer
-        self.buffer = {
-            "sensor": None,
-            "environment": None,
-            "actuator": None
-        }
+        self.buffer = {"sensor": None, "environment": None, "actuator": None}
         self.last_update = time.monotonic()
+
 
 aggregator = HydroponicAggregator()

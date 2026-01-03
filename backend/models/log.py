@@ -8,6 +8,7 @@ from config.db import Base
 if TYPE_CHECKING:
     from models.user import User
 
+
 class Log(Base):
     __tablename__ = "logs"
 

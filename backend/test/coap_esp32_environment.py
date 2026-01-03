@@ -1,9 +1,9 @@
 import asyncio
-from aiocoap import resource, Context, Message, Code
+from aiocoap import Context, Message, Code
 import json
 
-async def main():
 
+async def main():
     context = await Context.create_client_context()
 
     payload = json.dumps(
@@ -15,12 +15,17 @@ async def main():
             "light_intensity_atas": 800,
             "light_intensity_bawah": 750,
         }
-    ).encode('utf-8')
+    ).encode("utf-8")
 
-    request = Message(code=Code.PUT, payload=payload, uri="coap://localhost/coap/hydroponics/environment")
+    request = Message(
+        code=Code.PUT,
+        payload=payload,
+        uri="coap://localhost/coap/hydroponics/environment",
+    )
     response = await context.request(request).response
     print(f"Response Code: {response.code}")
     print(f"Response Payload: {response.payload.decode('utf-8')}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

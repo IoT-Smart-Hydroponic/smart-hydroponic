@@ -2,6 +2,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from datetime import datetime
 from typing import Optional
 
+
 class SensorBase(BaseModel):
     deviceid: str = Field(..., max_length=50)
     moisture1: int = Field(0, ge=0)
@@ -16,9 +17,11 @@ class SensorBase(BaseModel):
     distance_cm: float = Field(0.0)
     ph: float = Field(0.0, ge=0.0, le=14.0)
     tds: float = Field(0.0)
+
+
 class SensorIn(SensorBase):
     timestamp: Optional[datetime] = None
-    
+
     model_config = ConfigDict(
         json_schema_extra={
             "example": {

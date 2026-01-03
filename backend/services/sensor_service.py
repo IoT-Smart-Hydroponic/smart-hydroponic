@@ -3,6 +3,7 @@ from repositories.plant_repo import PlantRepository
 from schemas.plant import SensorIn, SensorOut
 from models.plant_data import SensorData
 
+
 class SensorService:
     def __init__(self, session: AsyncSession):
         self.repo = PlantRepository(session)
@@ -17,11 +18,13 @@ class SensorService:
     async def get_all_data(self, page: int = 1, limit: int = 25) -> list[SensorOut]:
         records = await self.repo.get_all_sensor_data(page, limit)
         return [SensorOut.model_validate(record) for record in records]
-    
-    async def get_specific_data(self, sensor_type: str, page: int = 1, limit: int = 25) -> list[SensorOut]:
+
+    async def get_specific_data(
+        self, sensor_type: str, page: int = 1, limit: int = 25
+    ) -> list[SensorOut]:
         records = await self.repo.get_specific_sensor_data(sensor_type, page, limit)
         return [SensorOut.model_validate(record) for record in records]
-    
+
     async def get_latest_data(self) -> SensorOut | None:
         record = await self.repo.get_latest_sensor_data()
         if record:

@@ -6,7 +6,7 @@ from schemas import (
     HydroponicDataEnvironment,
     HydroponicDataActuator,
 )
-from utils.deps import get_session, get_db_session
+from utils.deps import get_db_session
 from utils.aggregator import HydroponicAggregator
 from utils.manager import RoomConnectionManager
 from services.hydroponic_service import HydroponicService
@@ -18,13 +18,14 @@ COAP_CONFIG = {
     "web-client": None,
 }
 
+
 class HydroponicCoAPResource(resource.Resource):
     def __init__(
-            self, 
-            role: str, 
-            aggregator: HydroponicAggregator, 
-            manager: RoomConnectionManager
-        ):
+        self,
+        role: str,
+        aggregator: HydroponicAggregator,
+        manager: RoomConnectionManager,
+    ):
         super().__init__()
         self.role = role
         self.aggregator = aggregator
@@ -33,15 +34,16 @@ class HydroponicCoAPResource(resource.Resource):
 
     async def render_put(self, request):
         try:
-            payload = request.payload.decode('utf-8')
+            payload = request.payload.decode("utf-8")
             data_json = json.loads(payload)
 
             print(f"[COAP] Received data for role '{self.role}': {data_json}")
 
             if self.validator:
                 data = self.validator.model_validate(data_json)
-                snapshot = await self.aggregator.gather_data(self.role, data.model_dump())
-
+                snapshot = await self.aggregator.gather_data(
+                    self.role, data.model_dump()
+                )
 
                 if snapshot:
                     async with get_db_session() as session:
@@ -55,8 +57,9 @@ class HydroponicCoAPResource(resource.Resource):
                     print("[COAP] Snapshot complete and Broadcasted!")
 
             return aiocoap.Message(code=aiocoap.CHANGED, payload=b"Data received")
-        
+
         except Exception as e:
             print(f"[COAP][ERROR] {e}")
-            return aiocoap.Message(code=aiocoap.INTERNAL_SERVER_ERROR, payload=b"Error processing data")
-
+            return aiocoap.Message(
+                code=aiocoap.INTERNAL_SERVER_ERROR, payload=b"Error processing data"
+            )

@@ -1,7 +1,6 @@
 import websockets
 import random
 import dotenv
-import os
 import asyncio
 import json
 
@@ -15,12 +14,12 @@ asyncio.set_event_loop(asyncio.new_event_loop())
 
 def data_environment():
     return {
-            "temperature_atas": 20,
-            "temperature_bawah": 20,
-            "humidity_atas": random.randint(1, 100),
-            "humidity_bawah": random.randint(1, 100),
-            "light_intensity_atas": random.randint(100, 1000),
-            "light_intensity_bawah": random.randint(100, 1000),
+        "temperature_atas": 20,
+        "temperature_bawah": 20,
+        "humidity_atas": random.randint(1, 100),
+        "humidity_bawah": random.randint(1, 100),
+        "light_intensity_atas": random.randint(100, 1000),
+        "light_intensity_bawah": random.randint(100, 1000),
     }
 
 

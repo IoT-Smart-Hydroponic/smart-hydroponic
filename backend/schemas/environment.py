@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from typing import Optional
 
+
 class EnvironmentBase(BaseModel):
     deviceid: str = Field(..., max_length=50)
     temperature_atas: float = Field(0.0)
@@ -11,11 +12,12 @@ class EnvironmentBase(BaseModel):
     light_intensity_atas: int = Field(0, ge=0)
     light_intensity_bawah: int = Field(0, ge=0)
 
+
 class EnvironmentIn(EnvironmentBase):
     timestamp: Optional[datetime] = None
-    
+
     model_config = ConfigDict(
-        json_schema_extra=  {
+        json_schema_extra={
             "example": {
                 "deviceid": "env_sensor_001",
                 "temperature_atas": 25.5,
@@ -28,10 +30,11 @@ class EnvironmentIn(EnvironmentBase):
         }
     )
 
+
 class EnvironmentOut(EnvironmentBase):
     timestamp: datetime
     temperature_avg: float
     humidity_avg: float
     light_intensity_avg: float
-    
+
     model_config = ConfigDict(from_attributes=True)

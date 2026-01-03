@@ -3,12 +3,10 @@ from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
-import os
 
 # --- Load app settings
 from config.config import settings
 from config.db import Base
-from models import user, plant_data, environment_data, actuator_data, log, hydroponic  # Ensure all models are imported for Alembic to detect
 
 config = context.config
 

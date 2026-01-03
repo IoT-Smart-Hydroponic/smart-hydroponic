@@ -3,6 +3,7 @@ from repositories.actuator_repo import ActuatorRepository
 from schemas.actuator import ActuatorIn, ActuatorOut
 from models.actuator_data import ActuatorData
 
+
 class ActuatorService:
     def __init__(self, session: AsyncSession):
         self.repo = ActuatorRepository(session)
@@ -16,10 +17,12 @@ class ActuatorService:
         records = await self.repo.get_all_actuator_data(page, limit)
         return [ActuatorOut.model_validate(record) for record in records]
 
-    async def get_specific_data(self, actuator_type: str, page: int = 1, limit: int = 25) -> list[ActuatorOut]:
+    async def get_specific_data(
+        self, actuator_type: str, page: int = 1, limit: int = 25
+    ) -> list[ActuatorOut]:
         records = await self.repo.get_specific_actuator_data(actuator_type, page, limit)
         return [ActuatorOut.model_validate(record) for record in records]
-    
+
     async def get_latest_data(self) -> ActuatorOut | None:
         record = await self.repo.get_latest_actuator_data()
         if record:

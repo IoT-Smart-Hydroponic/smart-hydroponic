@@ -2,11 +2,14 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 from typing import Optional
 
+
 class ActuatorBase(BaseModel):
     deviceid: str = Field(..., max_length=50)
     pump_status: int = Field(0, ge=0)
     light_status: int = Field(0, ge=0)
     automation_status: int = Field(0, ge=0)
+
+
 class ActuatorIn(ActuatorBase):
     timestamp: Optional[datetime] = None
 
@@ -20,6 +23,7 @@ class ActuatorIn(ActuatorBase):
             }
         }
     )
+
 
 class ActuatorOut(ActuatorBase):
     timestamp: datetime

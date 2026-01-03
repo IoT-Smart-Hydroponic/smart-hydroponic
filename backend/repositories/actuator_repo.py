@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import text
 from models.actuator_data import ActuatorData
 
+
 class ActuatorRepository:
     def __init__(self, session: AsyncSession):
         self.session = session  # db session
@@ -18,17 +19,28 @@ class ActuatorRepository:
             SELECT * FROM actuator_data ORDER BY "timestamp" DESC LIMIT :limit OFFSET :offset
             """
         )
-        result = await self.session.execute(stmt, {"limit": limit, "offset": (page - 1) * limit})
+        result = await self.session.execute(
+            stmt, {"limit": limit, "offset": (page - 1) * limit}
+        )
         return list(result.mappings())
 
-    async def get_specific_actuator_data(self, actuator_type: str, page: int = 1, limit: int = 25):
+    async def get_specific_actuator_data(
+        self, actuator_type: str, page: int = 1, limit: int = 25
+    ):
         stmt = text(
             """
             SELECT :actuator_type, "timestamp" FROM actuator_data
             ORDER BY "timestamp" DESC LIMIT :limit OFFSET :offset
             """
         )
-        result = await self.session.execute(stmt, {"actuator_type": actuator_type, "limit": limit, "offset": (page - 1) * limit})
+        result = await self.session.execute(
+            stmt,
+            {
+                "actuator_type": actuator_type,
+                "limit": limit,
+                "offset": (page - 1) * limit,
+            },
+        )
         return list(result.mappings())
 
     async def get_latest_actuator_data(self):

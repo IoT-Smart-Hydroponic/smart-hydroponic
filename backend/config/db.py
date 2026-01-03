@@ -15,7 +15,7 @@ NAMING = MetaData(
 Base = declarative_base(metadata=NAMING)
 
 engine = create_async_engine(
-    settings.DATABASE_URL, 
+    settings.DATABASE_URL,
     echo=False,
     pool_pre_ping=True,
 )

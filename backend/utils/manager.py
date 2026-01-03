@@ -2,6 +2,7 @@ from fastapi import WebSocket
 from collections import defaultdict
 import asyncio
 
+
 class RoomConnectionManager:
     def __init__(self):
         self.rooms = defaultdict(lambda: defaultdict(dict))
@@ -38,5 +39,6 @@ class RoomConnectionManager:
         ws = self.rooms.get(room, {}).get(role, {}).get(client_id)
         if ws:
             await ws.send_json(message)
+
 
 manager = RoomConnectionManager()

@@ -2,9 +2,7 @@ import json
 import time
 import asyncio
 import websockets
-import random
 import dotenv
-import os
 
 dotenv.load_dotenv()
 
@@ -88,7 +86,10 @@ def handle_automatic_mode(message_data):
         actuator_state["pumpStatus"] = 1 if moistureAvg < MOISTURE_THRESHOLD else 0
 
     # Light control based on temperature
-    if "temperature_avg" in message_data and message_data["temperature_avg"] is not None:
+    if (
+        "temperature_avg" in message_data
+        and message_data["temperature_avg"] is not None
+    ):
         temperatureAvg = message_data["temperature_avg"]
         actuator_state["lightStatus"] = (
             1 if temperatureAvg < TEMPERATURE_THRESHOLD else 0
@@ -104,6 +105,8 @@ def handle_manual_mode(message_data):
 
     if "light_status" in message_data:
         actuator_state["lightStatus"] = message_data["light_status"]
+
+
 async def send_status_update(websocket):
     """Sends status update to the server"""
     if not websocket or not actuator_state["isActuatorConnected"]:
@@ -111,9 +114,9 @@ async def send_status_update(websocket):
 
     try:
         status_data = {
-                "pump_status": actuator_state["pumpStatus"],
-                "light_status": actuator_state["lightStatus"],
-                "automation_status": actuator_state["automationStatus"],
+            "pump_status": actuator_state["pumpStatus"],
+            "light_status": actuator_state["lightStatus"],
+            "automation_status": actuator_state["automationStatus"],
         }
 
         await websocket.send(json.dumps(status_data))
@@ -198,8 +201,8 @@ async def device_loop():
             if websocket:
                 try:
                     await websocket.close()
-                except:
-                    print("Error closing WebSocket")
+                except Exception as e:
+                    print(f"Error closing WebSocket: {e}")
 
             actuator_state["isActuatorConnected"] = False
             print(f"Disconnected. Reconnecting in {RECONNECT_DELAY} seconds...")
