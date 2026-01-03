@@ -8,8 +8,13 @@ README.md
 .git
 .gitignore
 .env*
-test
 *.swp
 *.bak
 npm-debug.log*
 pnpm-debug.log*
+__pycache__/
+.ruff_cache/
+.venv/
+test/
+.pytest_cache/
+*.pyc

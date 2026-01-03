@@ -19,6 +19,6 @@ do
 done
 
 echo "Running migrations..."
-alembic upgrade head
+python -m alembic upgrade head
 
 exec "$@"

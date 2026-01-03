@@ -1,48 +1,47 @@
-FROM python:3.14-slim AS base
+# --- STAGE 1: THE CHEF (Build Stage) ---
+FROM python:3.14-slim AS builder
 
-ENV PYTHONDONTWRITE_BYTECODE=1 \
-	PYTHONUNBUFFERED=1 \
-	APP_HOME=/app \
-	UV_SYSTEM_PYTHON=1 \
-	PORT=8000 \
-	HOST=0.0.0.0
+ENV UV_SYSTEM_PYTHON=1 \
+	PYTHONDONTWRITE_BYTECODE=1 \
+	PYTHONUNBUFFERED=1
 
-WORKDIR ${APP_HOME}
+WORKDIR /build
 
-# system deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
 	build-essential gcc curl \
 	&& rm -rf /var/lib/apt/lists/*
 
-# install uv
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
 	&& ln -s /root/.local/bin/uv /usr/local/bin/uv
 
-# deps first (cache-friendly)
 COPY pyproject.toml uv.lock* ./
+RUN uv sync --frozen --no-dev --no-install-project
 
-RUN uv pip install -r pyproject.toml --system
+# --- STAGE 2: THE MODEL (Final Stage) ---
+FROM python:3.14-slim AS runner
 
-# app source
-COPY main.py alembic.ini ./
-COPY config ./config
-COPY middleware ./middleware
-COPY migrations ./migrations
-COPY models ./models
-COPY repositories ./repositories
-COPY routes ./routes
-COPY schemas ./schemas
-COPY services ./services
-COPY templates ./templates
-COPY utils ./utils
+ENV APP_HOME=/app \
+	PORT=8000 \
+	HOST=0.0.0.0 \
+	PYTHONPATH=/app
 
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+WORKDIR ${APP_HOME}
+
+COPY --from=builder /build/.venv /app/.venv
+ENV PATH="/app/.venv/bin:$PATH"
+
+
+COPY . .
+
+RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
 
+# Healthcheck yang lebih manusiawi (Standard Python)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
-	CMD python - <<EOF || exit 1 import os, urllib.request urllib.request.urlopen(f"http://127.0.0.1:{os.getenv('PORT', '8000')}/health") EOF
+	CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')" || exit 1
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["/app/entrypoint.sh"]
+
+# Pake list format biar gampang dapet sinyal SIGTERM
+CMD ["python", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
