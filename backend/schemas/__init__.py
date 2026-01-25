@@ -10,6 +10,14 @@ from schemas.plant import SensorBase, SensorIn, SensorOut
 from schemas.environment import EnvironmentBase, EnvironmentIn, EnvironmentOut
 from schemas.user import UserBase, UserCreate, UserOut
 from schemas.actuator import ActuatorBase, ActuatorIn, ActuatorOut
+from schemas.responses import (
+    MessageResponse,
+    responses_400,
+    responses_401,
+    responses_403,
+    responses_404,
+    responses_500,
+)
 
 __all__ = [
     "HydroponicDataSensor",
@@ -30,4 +38,10 @@ __all__ = [
     "ActuatorBase",
     "ActuatorIn",
     "ActuatorOut",
+    "MessageResponse",
+    "responses_400",
+    "responses_401",
+    "responses_403",
+    "responses_404",
+    "responses_500",
 ]

@@ -1,28 +1,28 @@
 from pydantic import BaseModel, Field, ConfigDict, computed_field
 import datetime
 from typing import Optional
-from uuid import UUID
+from uuid import UUID, uuid7
 from typing import Generic, TypeVar, List
 
 T = TypeVar("T")
 
 
 class MetaData(BaseModel):
-    total_rows: int
+    total_rows: int | None = None
     limit: int
     offset: int
 
     @computed_field
     @property
     def total_pages(self) -> int:
-        if self.limit == 0:
+        if self.limit == 0 or self.total_rows is None:
             return 0
         return (self.total_rows + self.limit - 1) // self.limit
 
     @computed_field
     @property
     def current_page(self) -> int:
-        if self.limit == 0:
+        if self.limit == 0 or self.total_rows is None:
             return 0
         return (self.offset // self.limit) + 1
 
@@ -31,9 +31,11 @@ class ResponseList(BaseModel, Generic[T]):
     meta: MetaData
     data: List[T]
 
+
 class HydroponicInternalResult(BaseModel):
     data: List[HydroponicOut]
-    total: int
+    total: int | None
+
 
 class HydroponicDataSensor(BaseModel):
     moisture1: int = Field(0, ge=0)
@@ -67,14 +69,14 @@ class HydroponicDataActuator(BaseModel):
 class HydroponicAggregate(
     HydroponicDataSensor, HydroponicDataEnvironment, HydroponicDataActuator
 ):
-    dataid: UUID
+    dataid: UUID = Field(default_factory=uuid7)
 
 
 class HydroponicIn(HydroponicAggregate):
     model_config = ConfigDict(
         json_schema_extra={
             "example": {
-                "dataid": "hydroponic_001",
+                "dataid": "019b76da-a800-7000-8000-000000000000",
                 "moisture1": 450,
                 "moisture2": 460,
                 "moisture3": 470,

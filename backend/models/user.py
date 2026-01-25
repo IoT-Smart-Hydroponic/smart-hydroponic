@@ -1,8 +1,8 @@
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, DateTime, Enum
+from sqlalchemy import String, DateTime, Enum, func
 from sqlalchemy.dialects.postgresql import UUID
-from datetime import datetime, timezone
+from datetime import datetime
 import uuid
 from config.db import Base
 
@@ -17,12 +17,16 @@ class User(Base):
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     username: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     password: Mapped[str] = mapped_column(String(255))
     role: Mapped[str] = mapped_column(
-        Enum("admin", "user", name="user_roles"), default="user"
+        Enum("admin", "user", "superadmin", name="user_roles"), default="user"
     )
+    is_superuser: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.now(timezone.utc)
+        DateTime(timezone=True),
+        server_default=func.now(),
+        nullable=False,
     )
     logs: Mapped[list["Log"]] = relationship(
         "Log", back_populates="user", cascade="all, delete-orphan"

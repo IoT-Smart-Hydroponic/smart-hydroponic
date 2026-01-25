@@ -21,11 +21,21 @@ if config.config_file_name is not None:
 target_metadata = Base.metadata
 
 
+def include_object(object_, name, type_, reflected, compare_to):
+    # TimescaleDB commonly creates these indexes automatically for hypertables.
+    # They exist in the database but are not declared in SQLAlchemy models,
+    # so Alembic autogenerate would otherwise try to drop them.
+    if type_ == "index" and reflected and name and name.endswith("_timestamp_idx"):
+        return False
+    return True
+
+
 def run_migrations_offline():
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
+        include_object=include_object,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
@@ -37,6 +47,7 @@ def do_run_migrations(connection: Connection):
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
+        include_object=include_object,
         compare_type=True,  # Enable type comparison
         compare_server_default=True,  # Enable server default comparison
     )
