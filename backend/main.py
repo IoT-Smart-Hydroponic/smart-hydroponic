@@ -63,8 +63,19 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Smart Hydroponic API",
     version="2.0.0",
+    root_path="/smart-hydroponic/api/v2",
     redoc_url=None,
     lifespan=lifespan,
+    servers=[
+        {
+            "url": "http://localhost:8000/smart-hydroponic/api/v2",
+            "description": "Local Development Server",
+        },
+        {
+            "url": "http:/103.147.92.179/smart-hydroponic/api/v2",
+            "description": "Production IP Server",
+        },
+    ],
 )
 
 templates = Jinja2Templates(directory="templates")

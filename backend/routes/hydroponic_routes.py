@@ -1,4 +1,11 @@
-from fastapi import APIRouter, Depends, Request, WebSocket, WebSocketDisconnect
+from fastapi import (
+    APIRouter,
+    Depends,
+    Request,
+    WebSocket,
+    WebSocketDisconnect,
+    HTTPException,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.deps import get_session, get_db_session, get_current_user
 from services.hydroponic_service import HydroponicService
@@ -45,10 +52,22 @@ DEVICE_CONFIG = {
 }
 
 
-@router.get("/data/latest", response_model=HydroponicOut | None, status_code=200)
-async def get_latest_hydroponic_data(session: AsyncSession = Depends(get_session)) -> HydroponicOut | None:
+@router.get(
+    "/data/latest",
+    response_model=HydroponicOut | None,
+    status_code=200,
+    operation_id="getLatestHydroponicData",
+)
+async def get_latest_hydroponic_data(
+    session: AsyncSession = Depends(get_session),
+) -> HydroponicOut | None:
     service = HydroponicService(session)
-    return await service.get_latest_data()
+    data = await service.get_latest_data()
+
+    if data is None:
+        raise HTTPException(status_code=204, detail="No hydroponic data found")
+
+    return data
 
 
 @router.get(
@@ -56,6 +75,7 @@ async def get_latest_hydroponic_data(session: AsyncSession = Depends(get_session
     response_model=ResponseList[HydroponicOut],
     response_model_exclude_none=True,
     status_code=200,
+    operation_id="getSpecificHydroponicData",
 )
 async def get_specific_hydroponic_data(
     parameter: str,
@@ -67,21 +87,29 @@ async def get_specific_hydroponic_data(
     current_user: dict = Depends(get_current_user),
 ) -> ResponseList[HydroponicOut]:
     service = HydroponicService(session)
-    print(f"User: {current_user} fetching parameter: {parameter}")
     return await service.get_specific_data(parameter, page, limit, start_date, end_date)
 
 
-@router.post("/data", response_model=HydroponicOut, status_code=201)
+@router.post(
+    "/data",
+    response_model=HydroponicOut,
+    status_code=201,
+    operation_id="addHydroponicData",
+)
 async def add_hydroponic_data(
     hydroponic_data: HydroponicIn, session: AsyncSession = Depends(get_session)
 ) -> HydroponicOut:
     """Endpoint untuk menambahkan data hidroponik baru."""
     service = HydroponicService(session)
-    row = await service.add_data(hydroponic_data)
-    return row
+    return await service.add_data(hydroponic_data)
 
 
-@router.get("/data", response_model=ResponseList[HydroponicOut], status_code=200)
+@router.get(
+    "/data",
+    response_model=ResponseList[HydroponicOut],
+    status_code=200,
+    operation_id="getHydroponicData",
+)
 async def get_hydroponic_data(
     page: int = 1,
     limit: int = 25,
@@ -140,8 +168,7 @@ async def hydroponic_data_websocket(device_type: str, websocket: WebSocket):
                         saved_data = HydroponicIn.model_validate(snapshot)
                         new_data = await service.add_data(saved_data)
 
-                    data_out = HydroponicOut.model_validate(new_data)
-                    print(f"Snapshot created: {data_out.model_dump()}")
+                    print(f"Snapshot created: {new_data.model_dump()}")
 
                     actuator_fields = {
                         "moisture_avg",
@@ -152,16 +179,16 @@ async def hydroponic_data_websocket(device_type: str, websocket: WebSocket):
                     }
 
                     await manager.send_to_room(
-                        room=room, role="web-client", message=data_out.model_dump()
+                        room=room, role="web-client", message=new_data.model_dump()
                     )
 
                     await manager.send_to_room(
                         room=room,
                         role="actuator",
-                        message=data_out.model_dump(include=actuator_fields),
+                        message=new_data.model_dump(include=actuator_fields),
                     )
                     print(
-                        f"Snapshot created and sent to actuator clients: {data_out.model_dump(include=actuator_fields)}"
+                        f"Snapshot created and sent to actuator clients: {new_data.model_dump(include=actuator_fields)}"
                     )
             else:
                 # Directly forward commands from dashboard to actuators
@@ -189,12 +216,3 @@ async def hydroponic_data_websocket(device_type: str, websocket: WebSocket):
 async def test_sensor_data(request: Request):
     """Endpoint untuk menguji WebSocket sensor data hidroponik."""
     return templates.TemplateResponse("test_ws_sensor_data.html", {"request": request})
-
-
-@router.get(
-    "/ws/{device_type}/info",
-    summary="WebSocket Hydroponic Connection",
-    description="Use /ws/{device_type} to connect to the WebSocket for real-time hydroponic data.",
-)
-def websocket_info():
-    pass
