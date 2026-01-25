@@ -8,15 +8,16 @@ from enum import Enum
 class UserRole(str, Enum):
     ADMIN = "admin"
     USER = "user"
+    SUPERADMIN = "superadmin"
 
 
 class UserBase(BaseModel):
-    username: str = Field(..., min_length=3, max_length=50)
+    username: str = Field(..., min_length=3, max_length=100)
+    email: str = Field(..., max_length=100)
 
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8, max_length=255)
-    role: UserRole = UserRole.USER
 
 
 class UserLogin(BaseModel):
@@ -49,5 +50,8 @@ class Token(BaseModel):
 
 
 class TokenPayload(BaseModel):
-    sub: UUID
+    sub: str
+    id: str
+    role: str
+    iat: int
     exp: int

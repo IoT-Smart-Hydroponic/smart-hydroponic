@@ -8,8 +8,7 @@ from schemas.hydroponic import (
     HydroponicInternalResult,
     HydroponicOut,
 )
-import datetime
-from uuid import UUID
+from utils.converter import get_uuidv7_from_timestamp
 
 SENSOR_FIELDS = set(HydroponicDataSensor.model_fields.keys())
 ENVIRONMENT_FIELDS = set(HydroponicDataEnvironment.model_fields.keys())
@@ -20,34 +19,6 @@ GROUPS = {
     "environment": ENVIRONMENT_FIELDS,
     "actuator": ACTUATOR_FIELDS,
 }
-
-
-def get_uuidv7_from_timestamp(time_str: str, is_end=False) -> UUID:
-    # Check if contains time component
-    if " " in time_str:
-        time = datetime.datetime.fromisoformat(time_str).replace(
-            tzinfo=datetime.timezone.utc
-        )
-    else:
-        time = datetime.datetime.combine(
-            datetime.datetime.fromisoformat(time_str),
-            datetime.time.min,
-            tzinfo=datetime.timezone.utc,
-        )
-
-    timestamp_ms = int(time.timestamp() * 1000)
-
-    uuid_int = (timestamp_ms & 0xFFFFFFFFFFFF) << 80
-
-    uuid_int |= 0x7 << 76  # Set version to 7
-
-    uuid_int |= 0x2 << 62  # Set variant to RFC 4122
-
-    if is_end:
-        uuid_int |= 0x000000000FFF3FFFFFFFFFFFFFFF
-    else:
-        pass
-    return UUID(int=uuid_int)
 
 
 class HydroponicRepository:
@@ -67,10 +38,9 @@ class HydroponicRepository:
         start_date: str | None = None,
         end_date: str | None = None,
     ) -> HydroponicInternalResult:
-        
         filters = []
         params = {"limit": limit, "offset": (page - 1) * limit}
-        
+
         _start_date = get_uuidv7_from_timestamp(start_date) if start_date else None
         _end_date = (
             get_uuidv7_from_timestamp(end_date, is_end=True) if end_date else None
@@ -107,7 +77,10 @@ class HydroponicRepository:
             {k: v for k, v in params.items() if k in ["start_date", "end_date"]},
         )
         return HydroponicInternalResult(
-            data=list(HydroponicOut.model_validate(record) for record in data_result.mappings()),
+            data=list(
+                HydroponicOut.model_validate(record)
+                for record in data_result.mappings()
+            ),
             total=count_result.scalar_one(),
         )
 
@@ -171,7 +144,10 @@ class HydroponicRepository:
         )
 
         return HydroponicInternalResult(
-            data=list(HydroponicOut.model_validate(record) for record in data_result.mappings()),
+            data=list(
+                HydroponicOut.model_validate(record)
+                for record in data_result.mappings()
+            ),
             total=count_result.scalar() or 0,
         )
 

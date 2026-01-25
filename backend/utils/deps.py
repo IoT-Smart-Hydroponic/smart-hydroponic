@@ -1,10 +1,13 @@
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import AsyncSession
 from config.db import Session
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from schemas.user import TokenPayload
+from models.user import User
 from services.user_service import UserService
 from contextlib import asynccontextmanager
+from authlib.jose.errors import JoseError
 
 bearer_scheme = HTTPBearer()
 
@@ -23,10 +26,27 @@ async def get_current_user(
     try:
         token = credentials.credentials
         payload = service.verify_token(token)
-    except Exception as e:
-        raise HTTPException(status_code=401, detail="Invalid or expired token") from e
-    print("Current user payload:", dict(payload))
-    return {"sub": payload.get("sub"), "payload": dict(payload)}
+        payload = TokenPayload.model_validate(payload)
+
+        if payload.id is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid token payload",
+            )
+
+    except JoseError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+        )
+
+    user = await service.get_user_by_id(payload.id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found",
+        )
+    return User(**user)
 
 
 # Untuk penggunaan di luar konteks Depends e.g WebSocket

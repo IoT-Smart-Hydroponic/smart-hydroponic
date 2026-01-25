@@ -1,32 +1,57 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from repositories.environment_repo import EnvironmentRepository
+from sqlalchemy import text
 from schemas.environment import EnvironmentIn, EnvironmentOut
 from models.environment_data import EnvironmentData
 
 
 class EnvironmentService:
     def __init__(self, session: AsyncSession):
-        self.repo = EnvironmentRepository(session)
+        self.session = session
 
     async def add_data(self, env_data: EnvironmentIn) -> EnvironmentOut:
-        entity = EnvironmentData(**env_data.model_dump())
-        added_record = await self.repo.add_environment_data(entity)
-        return EnvironmentOut.model_validate(added_record)
+        row = EnvironmentData(**env_data.model_dump())
+
+        self.session.add(row)
+        await self.session.commit()
+        await self.session.refresh(row)
+
+        return EnvironmentOut.model_validate(row)
 
     async def get_all_data(
         self, page: int = 1, limit: int = 25
     ) -> list[EnvironmentOut]:
-        records = await self.repo.get_all_environment_data(page, limit)
-        return [EnvironmentOut.model_validate(record) for record in records]
+        stmt = text(
+            """
+            SELECT * FROM environment_data ORDER BY "timestamp" DESC LIMIT :limit OFFSET :offset
+            """
+        )
+        result = await self.session.execute(
+            stmt, {"limit": limit, "offset": (page - 1) * limit}
+        )
+        return [EnvironmentOut.model_validate(record) for record in result.mappings()]
 
     async def get_specific_data(
         self, data_type: str, page: int = 1, limit: int = 25
     ) -> list[EnvironmentOut]:
-        records = await self.repo.get_specific_environment_data(data_type, page, limit)
-        return [EnvironmentOut.model_validate(record) for record in records]
+        stmt = text(
+            """
+            SELECT :data_type, "timestamp" FROM environment_data
+            ORDER BY "timestamp" DESC LIMIT :limit OFFSET :offset
+            """
+        )
+        result = await self.session.execute(
+            stmt, {"data_type": data_type, "limit": limit, "offset": (page - 1) * limit}
+        )
+        return [EnvironmentOut.model_validate(record) for record in result.mappings()]
 
     async def get_latest_data(self) -> EnvironmentOut | None:
-        record = await self.repo.get_latest_environment_data()
+        stmt = text(
+            """
+            SELECT * FROM environment_data ORDER BY "timestamp" DESC LIMIT 1
+            """
+        )
+        record = await self.session.execute(stmt)
+        record = record.mappings().first()
         if record:
             return EnvironmentOut.model_validate(record)
         return None
