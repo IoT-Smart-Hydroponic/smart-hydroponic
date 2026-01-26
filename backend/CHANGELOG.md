@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.0-beta.6 (2026-01-26)
+
+### Bug Fixes
+
+- Docker repository name ([#13](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/pull/13),
+  [`0bfb36d`](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/commit/0bfb36d78ea5bfa909db9e36a7db766043c3f38a))
+
+
 ## v1.0.0-beta.5 (2026-01-26)
 
 ### Bug Fixes
