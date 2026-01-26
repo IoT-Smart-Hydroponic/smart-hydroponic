@@ -9,7 +9,11 @@ on:
 jobs:
   release:
     name: "Release"
+    if: github.repository == 'IoT-Smart-Hydroponic/smart-hydroponic' && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
+    concurrency:
+      group: release-dev-python
+      cancel-in-progress: false
     permissions:
       contents: write
     defaults:

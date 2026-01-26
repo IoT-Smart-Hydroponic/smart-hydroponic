@@ -1,11 +1,14 @@
 name: Build & Push on Release
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
   build-and-push:
+    if: github.repository == 'IoT-Smart-Hydroponic/smart-hydroponic'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -13,13 +16,12 @@ jobs:
         include:
           - name: smart-hydroponic-backend
             context: backend
-            file: backend/Dockerfile
+            file: Dockerfile
 
     steps:
-      - name: Checkout (release commit)
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.release.target_commitish }}
           fetch-depth: 0
           fetch-tags: true
 
@@ -35,6 +37,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PUSH }}
 
+      - name: Verify Dockerfile exists
+        run: |
+          ls -la
+          ls -la backend
+
       - name: Build & Push (${{ matrix.name }})
         uses: docker/build-push-action@v6
         with:
@@ -43,6 +50,6 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ matrix.name }}-latest
-            ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ matrix.name }}-${{ github.event.release.tag_name }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:${{ matrix.name }}-${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
