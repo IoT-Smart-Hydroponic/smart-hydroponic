@@ -15,7 +15,7 @@ jobs:
         include:
           - name: smart-hydroponic-backend
             context: backend
-            file: Dockerfile
+            file: backend/Dockerfile
 
     steps:
       - name: Checkout
@@ -23,6 +23,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Set up QEMU (optional for multi-arch)
         uses: docker/setup-qemu-action@v3
