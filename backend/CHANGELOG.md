@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v1.0.0-beta.4 (2026-01-26)
+
+### Bug Fixes
+
+- Docker github actions condition
+  ([#11](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/pull/11),
+  [`b9b2ceb`](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/commit/b9b2cebbf46ed682f79de91203f74175da3e84cd))
+
+
 ## v1.0.0-beta.3 (2026-01-26)
 
 ### Bug Fixes
