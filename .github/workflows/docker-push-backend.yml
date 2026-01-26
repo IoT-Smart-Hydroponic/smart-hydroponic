@@ -1,17 +1,13 @@
 name: Build & Push on Release
 
 on:
-  workflow_run:
-    workflows: ["Continuous Delivery"]
-    types:
-      - completed
-    branches:
-      - dev-python
+  release:
+    types: [published]
   workflow_dispatch:
 
 jobs:
   build-and-push:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    name: "Build and Push Docker Image"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
