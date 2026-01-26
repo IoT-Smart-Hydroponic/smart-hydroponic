@@ -2,6 +2,15 @@
 
 <!-- version list -->
 
+## v1.0.0-beta.5 (2026-01-26)
+
+### Bug Fixes
+
+- Branch ref for docker push
+  ([#12](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/pull/12),
+  [`e61dbab`](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/commit/e61dbab201af2d8c2db2d0962a523c1a96416624))
+
+
 ## v1.0.0-beta.4 (2026-01-26)
 
 ### Bug Fixes
