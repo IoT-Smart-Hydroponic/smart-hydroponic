@@ -22,7 +22,13 @@ from utils.manager import manager
 from utils.aggregator import aggregator
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s:     %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/hydroponics", tags=["Hydroponics"])
 
@@ -148,7 +154,7 @@ async def hydroponic_data_websocket(device_type: str, websocket: WebSocket):
         room=room, role=role, client_id=session_id, websocket=websocket
     )
 
-    print(f"{role.capitalize()}: {physical_id} connected with session ID: {session_id}")
+    logger.info(f"{role.capitalize()}: {physical_id} connected with session ID: {session_id}")
 
     try:
         while True:
@@ -168,7 +174,7 @@ async def hydroponic_data_websocket(device_type: str, websocket: WebSocket):
                         saved_data = HydroponicIn.model_validate(snapshot)
                         new_data = await service.add_data(saved_data)
 
-                    print(f"Snapshot created: {new_data.model_dump()}")
+                    logger.info(f"Snapshot created: {new_data.model_dump()}")
 
                     actuator_fields = {
                         "moisture_avg",
@@ -187,7 +193,7 @@ async def hydroponic_data_websocket(device_type: str, websocket: WebSocket):
                         role="actuator",
                         message=new_data.model_dump(include=actuator_fields),
                     )
-                    print(
+                    logger.info(
                         f"Snapshot created and sent to actuator clients: {new_data.model_dump(include=actuator_fields)}"
                     )
             else:
@@ -202,14 +208,14 @@ async def hydroponic_data_websocket(device_type: str, websocket: WebSocket):
         await manager.disconnect(
             room="hydroponics", role="sensor", client_id=session_id
         )
-        print(f"Client {session_id} disconnected")
+        logger.info(f"Client {session_id} disconnected")
 
     except Exception as e:
         await manager.disconnect(
             room="hydroponics", role="sensor", client_id=session_id
         )
         await websocket.close(code=1011)
-        print(f"Error: {e}")
+        logger.error(f"Error: {e}")
 
 
 @router.get("/test-sensor-data", response_class=HTMLResponse)

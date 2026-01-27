@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
@@ -17,11 +18,17 @@ from contextlib import asynccontextmanager
 from routes.coap_handler import HydroponicCoAPResource
 from utils.aggregator import aggregator
 from utils.manager import manager
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s:     %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("Starting up CoAP server...")
+    logger.info("Starting up CoAP server...")
 
     root = resource.Site()
 
@@ -56,7 +63,7 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    print("Shutting down CoAP server...")
+    logger.info("Shutting down CoAP server...")
     await coap_context.shutdown()
 
 

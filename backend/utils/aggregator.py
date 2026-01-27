@@ -2,7 +2,13 @@ import asyncio
 from schemas import HydroponicIn
 from uuid import uuid7
 import time
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s:     %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 class HydroponicAggregator:
     def __init__(self, timeout: float = 5.0, min_interval: float = 1.0):
@@ -20,15 +26,15 @@ class HydroponicAggregator:
             if source in self.last_received:
                 delta = now - self.last_received[source]
                 if delta < self.min_interval:
-                    print(
-                        f"[WARN] Data from {source} received too quickly ({delta:.2f}s); ignoring."
+                    logger.warning(
+                        f"Data from {source} received too quickly ({delta:.2f}s); ignoring."
                     )
                     return None
 
             self.last_received[source] = now
 
             if any(self.buffer.values()) and (now - self.last_update > self.timeout):
-                print("[WARN] Incomplete data; resetting buffer due to timeout.")
+                logger.warning("Incomplete data; resetting buffer due to timeout.")
                 self.reset()
 
             self.buffer[source] = data
