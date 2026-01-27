@@ -2,6 +2,21 @@
 
 <!-- version list -->
 
+## v1.0.0-beta.7 (2026-01-27)
+
+### Bug Fixes
+
+- Update API documentation link in index.html
+  ([#14](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/pull/14),
+  [`887b5c7`](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/commit/887b5c7aa7013a22932bcb0058342baff25fa954))
+
+### Features
+
+- Add superuser creation, role management and enhance logging
+  ([#14](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/pull/14),
+  [`887b5c7`](https://github.com/IoT-Smart-Hydroponic/smart-hydroponic/commit/887b5c7aa7013a22932bcb0058342baff25fa954))
+
+
 ## v1.0.0-beta.6 (2026-01-26)
 
 ### Bug Fixes
