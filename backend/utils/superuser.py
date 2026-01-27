@@ -5,7 +5,6 @@ from sqlalchemy import text
 from models.user import User
 from schemas.user import UserRole
 import bcrypt
-import os
 import logging
 
 logging.basicConfig(

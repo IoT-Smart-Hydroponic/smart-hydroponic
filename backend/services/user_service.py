@@ -18,7 +18,7 @@ class UserService:
 
     async def authenticate_user(self, user_credentials: UserLogin):
         user = None
-        
+
         if user_credentials.username:
             user = await self.get_user_by_username(user_credentials.username)
         elif user_credentials.email:
@@ -65,7 +65,7 @@ class UserService:
         )
         result = await self.session.execute(stmt, {"username": username})
         return result.mappings().first()
-    
+
     async def get_user_by_email(self, email: str):
         stmt = text(
             """

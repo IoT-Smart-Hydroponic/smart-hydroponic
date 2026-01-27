@@ -138,7 +138,9 @@ async def update_user(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    if current_user.role == "user" and (user_update.role == "admin" or user_update.role == "superadmin"):
+    if current_user.role == "user" and (
+        user_update.role == "admin" or user_update.role == "superadmin"
+    ):
         raise HTTPException(status_code=403, detail="Permission denied")
 
     service = UserService(session)

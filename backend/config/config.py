@@ -22,7 +22,6 @@ class Settings(BaseSettings):
     SUPERUSER_EMAIL: str = Field(default="admin@example.com", alias="SUPERUSER_EMAIL")
     SUPERUSER_PASSWORD: str = Field(default="adminpassword", alias="SUPERUSER_PASSWORD")
     SUPERUSER_ROLE: str = Field(default="superadmin", alias="SUPERUSER_ROLE")
-    
 
     @computed_field
     @property

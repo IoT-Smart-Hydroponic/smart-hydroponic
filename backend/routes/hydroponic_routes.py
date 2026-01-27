@@ -154,7 +154,9 @@ async def hydroponic_data_websocket(device_type: str, websocket: WebSocket):
         room=room, role=role, client_id=session_id, websocket=websocket
     )
 
-    logger.info(f"{role.capitalize()}: {physical_id} connected with session ID: {session_id}")
+    logger.info(
+        f"{role.capitalize()}: {physical_id} connected with session ID: {session_id}"
+    )
 
     try:
         while True:

@@ -10,6 +10,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+
 class HydroponicAggregator:
     def __init__(self, timeout: float = 5.0, min_interval: float = 1.0):
         self.buffer = {"sensor": None, "environment": None, "actuator": None}
