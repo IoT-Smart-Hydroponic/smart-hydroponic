@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE: str = Field(default="1h", alias="JWT_EXPIRES_IN")  # 60 minutes
     SECRET_KEY: str = Field(default="mysecretkey", alias="JWT_SECRET")
+    SUPERUSER_USERNAME: str = Field(default="admin", alias="SUPERUSER_USERNAME")
+    SUPERUSER_EMAIL: str = Field(default="admin@example.com", alias="SUPERUSER_EMAIL")
+    SUPERUSER_PASSWORD: str = Field(default="adminpassword", alias="SUPERUSER_PASSWORD")
+    SUPERUSER_ROLE: str = Field(default="superadmin", alias="SUPERUSER_ROLE")
+    
 
     @computed_field
     @property

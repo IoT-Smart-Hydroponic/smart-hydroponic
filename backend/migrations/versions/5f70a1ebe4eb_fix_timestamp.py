@@ -46,6 +46,7 @@ def upgrade() -> None:
         server_default=sa.text("now()"),
         existing_nullable=False,
     )
+    op.execute("ALTER TYPE user_roles ADD VALUE IF NOT EXISTS 'superadmin'")
     op.create_index(op.f("ix_user_data_email"), "user_data", ["email"], unique=True)
     # ### end Alembic commands ###
 

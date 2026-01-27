@@ -1,41 +1,53 @@
 from config.db import Session
+from config.config import settings
 import asyncio
 from sqlalchemy import text
 from models.user import User
-from getpass import getpass
+from schemas.user import UserRole
 import bcrypt
+import os
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s:     %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 
 async def create_superuser():
-    print("Create Superuser Account")
-    username = input("Username: ")
-    password = getpass("Password: ")
-    confirm_password = getpass("Confirm Password: ")
+    logger.info("Create Superuser Account")
+    username = settings.SUPERUSER_USERNAME
+    email = settings.SUPERUSER_EMAIL
+    password = settings.SUPERUSER_PASSWORD
+    role = UserRole.SUPERADMIN.value
 
-    if password != confirm_password:
-        print("Error: Passwords do not match.")
+    if not username or not password:
+        logger.error("Missing environment variables for superuser creation.")
         return
 
     hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
     async with Session() as session:
         async with session.begin():
             existing_user = await session.execute(
-                text("SELECT * FROM users WHERE username = :username"),
+                text("SELECT * FROM user_data WHERE username = :username"),
                 {"username": username},
             )
             if existing_user.first():
-                print("Error: Username already exists.")
+                logger.error("Username already exists.")
                 return
 
             new_user = User(
                 username=username,
-                password_hash=hashed_password.decode("utf-8"),
+                email=email,
+                password=hashed_password.decode("utf-8"),
+                role=role,
                 is_superuser=True,
             )
             session.add(new_user)
             await session.commit()
 
-    print(f"Superuser '{username}' created successfully.")
+    logger.info(f"Superuser '{username}' created successfully.")
 
 
 if __name__ == "__main__":

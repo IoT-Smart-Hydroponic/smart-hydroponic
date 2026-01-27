@@ -112,7 +112,7 @@ async def read_users(
 ):
     service = UserService(session)
     try:
-        if current_user.role != "admin":
+        if current_user.role == "user":
             raise HTTPException(status_code=403, detail="Permission denied")
         users = await service.get_all_users()
         return [UserOut.model_validate(user) for user in users]
@@ -138,7 +138,7 @@ async def update_user(
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
-    if current_user.role != "admin" and user_update.role == "admin":
+    if current_user.role == "user" and (user_update.role == "admin" or user_update.role == "superadmin"):
         raise HTTPException(status_code=403, detail="Permission denied")
 
     service = UserService(session)
@@ -173,7 +173,7 @@ async def delete_user(
 ):
     service = UserService(session)
     try:
-        if current_user.role != "admin":
+        if current_user.role == "user":
             raise HTTPException(status_code=403, detail="Permission denied")
         user = await service.get_user_by_id(user_id)
         if not user:

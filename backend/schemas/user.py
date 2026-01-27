@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, model_validator
+from pydantic.networks import EmailStr
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
@@ -13,7 +14,7 @@ class UserRole(str, Enum):
 
 class UserBase(BaseModel):
     username: str = Field(..., min_length=3, max_length=100)
-    email: str = Field(..., max_length=100)
+    email: EmailStr
 
 
 class UserCreate(UserBase):
@@ -21,8 +22,15 @@ class UserCreate(UserBase):
 
 
 class UserLogin(BaseModel):
-    username: str
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None
     password: str
+
+    @model_validator(mode="after")
+    def check_username_or_email(self):
+        if not self.username and not self.email:
+            raise ValueError("Either username or email must be provided.")
+        return self
 
 
 class UserUpdate(BaseModel):
@@ -33,6 +41,7 @@ class UserUpdate(BaseModel):
 
 class UserOut(UserBase):
     userid: UUID
+    email: Optional[EmailStr] = None
     role: UserRole
     created_at: datetime
 
