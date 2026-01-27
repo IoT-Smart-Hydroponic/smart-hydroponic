@@ -8,7 +8,7 @@ from schemas.hydroponic import (
 )
 from schemas.plant import SensorBase, SensorIn, SensorOut
 from schemas.environment import EnvironmentBase, EnvironmentIn, EnvironmentOut
-from schemas.user import UserBase, UserCreate, UserOut
+from schemas.user import UserBase, UserCreate, UserOut, UserRole
 from schemas.actuator import ActuatorBase, ActuatorIn, ActuatorOut
 from schemas.responses import (
     MessageResponse,
@@ -35,6 +35,7 @@ __all__ = [
     "UserBase",
     "UserCreate",
     "UserOut",
+    "UserRole",
     "ActuatorBase",
     "ActuatorIn",
     "ActuatorOut",

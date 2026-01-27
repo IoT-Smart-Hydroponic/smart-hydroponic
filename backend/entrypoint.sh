@@ -20,5 +20,7 @@ done
 
 echo "Running migrations..."
 python -m alembic upgrade head
+echo "Create superuser if not exists..."
+python -m utils.superuser
 
 exec "$@"
