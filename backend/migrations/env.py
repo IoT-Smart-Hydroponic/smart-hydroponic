@@ -7,7 +7,6 @@ from alembic import context
 # --- Load app settings
 from config.config import settings
 from config.db import Base
-from models import HydroponicData, User, Log  # Import all models to ensure they are registered with SQLAlchemy's metadata
 
 config = context.config
 

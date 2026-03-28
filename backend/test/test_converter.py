@@ -36,7 +36,9 @@ class TestConverter(unittest.TestCase):
     def test_parses_iso_z_datetime(self):
         value = "2026-03-15T12:30:00Z"
         expected_ms = int(
-            datetime.datetime(2026, 3, 15, 12, 30, 0, tzinfo=datetime.timezone.utc).timestamp()
+            datetime.datetime(
+                2026, 3, 15, 12, 30, 0, tzinfo=datetime.timezone.utc
+            ).timestamp()
             * 1000
         )
 
@@ -46,7 +48,9 @@ class TestConverter(unittest.TestCase):
     def test_parses_custom_dd_mm_yyyy_datetime(self):
         value = "15/03/2026 12:30:00"
         expected_ms = int(
-            datetime.datetime(2026, 3, 15, 12, 30, 0, tzinfo=datetime.timezone.utc).timestamp()
+            datetime.datetime(
+                2026, 3, 15, 12, 30, 0, tzinfo=datetime.timezone.utc
+            ).timestamp()
             * 1000
         )
 
@@ -56,7 +60,9 @@ class TestConverter(unittest.TestCase):
     def test_parses_rfc2822_datetime(self):
         value = "Sun, 15 Mar 2026 12:30:00 GMT"
         expected_ms = int(
-            datetime.datetime(2026, 3, 15, 12, 30, 0, tzinfo=datetime.timezone.utc).timestamp()
+            datetime.datetime(
+                2026, 3, 15, 12, 30, 0, tzinfo=datetime.timezone.utc
+            ).timestamp()
             * 1000
         )
 
@@ -68,11 +74,15 @@ class TestConverter(unittest.TestCase):
         end = get_uuidv7_from_timestamp("2026-03-15", is_end=True)
 
         expected_start_ms = int(
-            datetime.datetime(2026, 3, 15, 0, 0, 0, tzinfo=datetime.timezone.utc).timestamp()
+            datetime.datetime(
+                2026, 3, 15, 0, 0, 0, tzinfo=datetime.timezone.utc
+            ).timestamp()
             * 1000
         )
         expected_end_ms = int(
-            datetime.datetime(2026, 3, 15, 23, 59, 59, 999999, tzinfo=datetime.timezone.utc).timestamp()
+            datetime.datetime(
+                2026, 3, 15, 23, 59, 59, 999999, tzinfo=datetime.timezone.utc
+            ).timestamp()
             * 1000
         )
 
