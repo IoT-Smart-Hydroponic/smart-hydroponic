@@ -61,6 +61,17 @@ class Token(BaseModel):
     access_token: str
     token_type: str = "Bearer"
 
+class AccountSummary(BaseModel):
+    userid: UUID
+    username: str
+    email: Optional[EmailStr] = None
+    fullname: Optional[str] = None
+    role: UserRole
+
+
+class LoginResponse(Token):
+    user: AccountSummary
+
 
 class AccountSummary(BaseModel):
     userid: UUID
