@@ -61,6 +61,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str = "Bearer"
 
+
 class AccountSummary(BaseModel):
     userid: UUID
     username: str

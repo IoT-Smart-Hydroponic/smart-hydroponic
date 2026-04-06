@@ -77,7 +77,9 @@ def test_login_invalid_credentials(client: TestClient, monkeypatch: pytest.Monke
     assert response.json()["detail"] == "Invalid username or password"
 
 
-def test_register_duplicate_username(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+def test_register_duplicate_username(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+):
     async def fake_get_user_by_username(_self, _username):
         return {
             "userid": uuid4(),
@@ -151,7 +153,9 @@ def test_hydroponic_post_forbidden_for_user_role(client: TestClient):
     assert response.json()["detail"] == "Permission denied"
 
 
-def test_hydroponic_specific_invalid_parameter(client: TestClient, monkeypatch: pytest.MonkeyPatch):
+def test_hydroponic_specific_invalid_parameter(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+):
     _set_current_user_override(role="admin")
 
     async def fake_get_specific_data(
