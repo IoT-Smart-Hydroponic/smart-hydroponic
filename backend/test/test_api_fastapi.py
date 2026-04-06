@@ -198,13 +198,9 @@ def test_delete_user_success(client: TestClient, monkeypatch: pytest.MonkeyPatch
     assert response.json()["detail"] == "User deleted successfully"
 
 
-<<<<<<< HEAD
 def test_get_latest_hydroponic_data(
     client: TestClient, monkeypatch: pytest.MonkeyPatch
 ):
-=======
-def test_get_latest_hydroponic_data(client: TestClient, monkeypatch: pytest.MonkeyPatch):
->>>>>>> 769a107 (feat(backend): refactor auth/user services and add API coverage)
     _set_current_user_override(role="admin")
 
     sample = HydroponicOut(
