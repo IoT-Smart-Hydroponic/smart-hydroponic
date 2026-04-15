@@ -2,6 +2,10 @@
 
 <!-- version list -->
 
+## v2.0.0
+
+- Initial stable release for the backend application.
+
 ## v1.0.0-beta.14 (2026-04-09)
 
 ### Features

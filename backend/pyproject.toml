@@ -1,6 +1,6 @@
 [project]
 name = "smart-hydroponic-backend"
-version = "1.0.0-beta.14"
+version = "2.0.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
@@ -35,6 +35,7 @@ commit_parser = "conventional"
 upload_to_release = true
 upload_to_pypi = false
 changelog_file = "CHANGELOG.md"
+tag_format = "backend-v{version}"
 build_command = """
     uv lock --upgrade-package "$PACKAGE_NAME"
     git add uv.lock
