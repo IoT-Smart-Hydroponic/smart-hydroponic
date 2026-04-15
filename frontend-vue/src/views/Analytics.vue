@@ -196,7 +196,7 @@ const downsampleSeries = (rows: Array<HydroponicOut>, maxPoints = 180): Array<Hy
   const step = Math.ceil(rows.length / maxPoints);
   const sampled = rows.filter((_, index) => index % step === 0);
   const last = rows[rows.length - 1];
-  if (sampled[sampled.length - 1] !== last) {
+  if (last && sampled[sampled.length - 1] !== last) {
     sampled.push(last);
   }
   return sampled;

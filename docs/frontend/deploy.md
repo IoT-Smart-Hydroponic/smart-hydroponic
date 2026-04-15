@@ -55,4 +55,3 @@ sudo systemctl restart nginx
 ```
 
 Contoh akses aplikasi setelah deploy: [http://123.123.123.123/dashboard-hidroponik](http://123.123.123.123/dashboard-hidroponik)
-

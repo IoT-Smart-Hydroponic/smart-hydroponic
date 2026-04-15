@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import { authState } from '@/auth';
+import { authState } from '../auth';
 
 const routes = [
   { path: '/', redirect: '/dashboard' },
@@ -48,7 +48,7 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
   const allowedRoles = to.meta.allowedRoles as string[];
   const currentRole = authState.user?.role || null;

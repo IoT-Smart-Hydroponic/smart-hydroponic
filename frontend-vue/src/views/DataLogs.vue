@@ -169,7 +169,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, reactive, computed, watch } from 'vue';
-import { authState } from "../auth";
 import Sidebar from '@/components/Sidebar.vue';
 import Topbar from '@/components/Topbar.vue';
 import brandLogo from '@/assets/images/logo-hydroponic.png';
@@ -251,7 +250,10 @@ const escapeCsvField = (value: unknown): string => {
 const buildCsvFromRows = (rows: Array<Record<string, unknown>>): string => {
   if (!rows.length) return '';
 
-  const headers = Object.keys(rows[0]);
+  const firstRow = rows[0];
+  if (!firstRow) return '';
+
+  const headers = Object.keys(firstRow);
   const headerLine = headers.map(escapeCsvField).join(',');
   const bodyLines = rows.map((row) => headers.map((header) => escapeCsvField(row[header])).join(','));
 
